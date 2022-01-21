@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    body {
+        @apply text-dark-100 bg-dark-600;
+    }
+
+    .button {
+        @apply flex items-center justify-center w-32 text-sm font-bold border rounded-full;
+    }
+
+    .button.gray {
+        @apply border-dark-100 text-dark-400 bg-dark-100 hover:bg-dark-200 hover:border-dark-200 disabled:bg-dark-200 disabled:border-dark-200;
+    }
+
+    .button.gray.hollow {
+        @apply bg-transparent text-dark-100 border-dark-100 hover:bg-dark-hover;
+    }
+}

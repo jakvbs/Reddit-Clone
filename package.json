@@ -1,0 +1,49 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "install-client": "cd ../client && npm install --only=production",
+    "build": "cd ../client && npm run build",
+    "heroku-postbuild": "npm run install-client && npm run build",
+    "start": "NODE_OPTIONS='--experimental-specifier-resolution=node' node src/server.js",
+    "dev": "NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon src/server.js",
+    "lint": "./node_modules/.bin/eslint .",
+    "lint:fix": "./node_modules/.bin/eslint . --fix",
+    "seed": "NODE_OPTIONS='--experimental-specifier-resolution=node' node ./src/seeds/create-fake-data.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^11.0.0",
+    "express": "^4.17.2",
+    "express-rate-limit": "^6.1.0",
+    "helmet": "^5.0.0",
+    "joi": "^17.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "lorem-ipsum": "^2.0.4",
+    "mongoose": "^6.1.4",
+    "mongoose-autopopulate": "^0.16.0",
+    "morgan": "^1.10.0",
+    "passport": "^0.5.2",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-jwt": "^4.0.0",
+    "qs": "^6.10.3",
+    "winston": "^3.4.0",
+    "winston-daily-rotate-file": "^4.5.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.6.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
+  }
+}
