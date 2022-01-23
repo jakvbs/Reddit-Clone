@@ -1,4 +1,3 @@
-import Comment from '../models/Comment';
 import Post from '../models/Post';
 import Sub from '../models/Sub';
 import Vote from '../models/Vote';
@@ -7,13 +6,7 @@ export default {
     async findOne(req, res, next) {
         const { id } = req.params;
         const { user } = res.locals;
-        const post = await Post.findById(id).populate({
-            path: 'sub',
-            populate: {
-                path: 'user',
-                select: 'username',
-            },
-        });
+        const post = await Post.findById(id);
         if (!post) return next();
         if (user) {
             post.setUserVote(user);
@@ -26,19 +19,16 @@ export default {
         const { id } = req.params;
         const { user } = res.locals;
 
-        const post = await Post.findById(id);
+        const post = await Post.findById(id).populate({
+            path: 'comments',
+            options: { sort: 'createdAt' },
+        });
 
         if (!post) {
             return res.status(404).send({ message: 'Post not found' });
         }
 
-        const comments = await Comment.find({ post: id }).sort({
-            voteScore: 1,
-        });
-
-        if (!comments) {
-            return res.status(404).send({ message: 'Post has no comments' });
-        }
+        const { comments } = post;
 
         if (user) {
             comments.forEach((comment) => comment.setUserVote(user));
@@ -81,7 +71,7 @@ export default {
             sub: findSub,
         });
 
-        findSub.posts.push(post);
+        findSub.posts.push(post._id);
 
         await Promise.all([post.save(), findSub.save()]);
 
@@ -117,7 +107,7 @@ export default {
         }
 
         const sub = await Sub.findById(post.sub._id);
-        sub.posts = sub.posts.filter((postId) => !postId.equals(id));
+        sub.posts.pull(post._id);
 
         post.comments.forEach(async (comment) => {
             await Promise.all(comment.votes.map((voteId) => Vote.findByIdAndRemove(voteId)));

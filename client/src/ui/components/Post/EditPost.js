@@ -12,7 +12,6 @@ const EditPost = () => {
 
     const post = useSelector((state) => state.entities.posts.byId[id]);
     const sub = useSelector((state) => state.entities.subs.byId[subname]);
-    const { errors: subErrors } = useSelector((state) => state.subs);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -38,13 +37,13 @@ const EditPost = () => {
         history.push(post.url);
     };
 
-    if (Object.keys(subErrors).length) {
+    if (!post || !sub) {
         return (
             <div className="container">
                 <div className="row">
                     <div className="col-md-8 offset-md-2">
                         <div className="alert alert-danger">
-                            <strong>Error!</strong> {subErrors.message}
+                            <strong>Loading..</strong>
                         </div>
                     </div>
                 </div>

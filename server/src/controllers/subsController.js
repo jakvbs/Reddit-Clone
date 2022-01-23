@@ -1,4 +1,3 @@
-import Post from '../models/Post';
 import Sub from '../models/Sub';
 
 export default {
@@ -18,15 +17,12 @@ export default {
         const page = parseInt(req.query.page, 10) || 1;
         const skip = (page - 1) * limit;
 
-        const sub = await Sub.findOne({ name: req.params.name });
+        const sub = await Sub.findOne({ name: req.params.name }).populate({
+            path: 'posts',
+            options: { sort: { createdAt: 1 }, skip, limit },
+        });
 
-        const posts = await Post.find({ sub })
-            .sort({
-                createdAt: 1,
-            })
-            .skip(skip)
-            .limit(limit)
-            .exec();
+        const { posts } = sub;
 
         if (!posts) {
             return res.status(404).send({ message: 'No post has been created yet' });

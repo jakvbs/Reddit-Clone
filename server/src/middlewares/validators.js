@@ -11,7 +11,7 @@ const options = {
     },
 };
 
-const validate = (schema) => async (req, res, next) => {
+const validateBody = (schema) => async (req, res, next) => {
     try {
         req.body = await schema.validateAsync(req.body, options);
         return next();
@@ -58,9 +58,19 @@ const voteSchema = Joi.object({
     commentId: Joi.string(),
 });
 
-export const registerValidator = validate(registerSchema);
-export const loginValidator = validate(loginSchema);
-export const subValidator = validate(subSchema);
-export const postValidator = validate(postSchema);
-export const commentValidator = validate(commentSchema);
-export const voteValidator = validate(voteSchema);
+export const registerValidator = validateBody(registerSchema);
+export const loginValidator = validateBody(loginSchema);
+export const subValidator = validateBody(subSchema);
+export const postValidator = validateBody(postSchema);
+export const commentValidator = validateBody(commentSchema);
+export const voteValidator = validateBody(voteSchema);
+
+export const validateId = (req, res, next) => {
+    const { id } = req.params;
+
+    if (id.length !== 24) {
+        return res.status(400).send({ message: 'Invalid id' });
+    }
+
+    return next();
+};

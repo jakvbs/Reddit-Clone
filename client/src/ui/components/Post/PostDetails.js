@@ -59,8 +59,6 @@ const PostDetails = () => {
             return;
         }
         await dispatch(votePost({ postId: id, value: newValue }));
-
-        console.log('%cVoted!!!!!!!!!!!!!', 'color: green');
     };
 
     if (!post) {

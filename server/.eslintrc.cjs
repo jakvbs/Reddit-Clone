@@ -12,7 +12,7 @@ module.exports = {
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
     },
-    ignorePatterns: ['dist/'],
+    ignorePatterns: ['node_modules'],
     rules: {
         'prettier/prettier': 'error',
         'class-methods-use-this': 'off',

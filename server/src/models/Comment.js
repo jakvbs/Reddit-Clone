@@ -4,15 +4,15 @@ import { setUserVote, setVoteScore } from '../utils/methods';
 
 const CommentSchema = mongoose.Schema(
     {
+        body: {
+            type: String,
+            required: true,
+        },
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
             required: true,
             autopopulate: true,
-        },
-        body: {
-            type: String,
-            required: true,
         },
         post: {
             type: mongoose.Schema.Types.ObjectId,

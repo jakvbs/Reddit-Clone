@@ -4,16 +4,16 @@ import jwtAuth from '../middlewares/auth';
 import { catchAsync } from '../middlewares/errors';
 import extractUserInfo from '../middlewares/extractUser';
 import { getPostFilters } from '../middlewares/filters';
-import { postValidator } from '../middlewares/validators';
+import { postValidator, validateId } from '../middlewares/validators';
 
 export default () => {
     const api = Router();
 
     // GET /posts/:id
-    api.get('/:id', extractUserInfo, catchAsync(postsController.findOne));
+    api.get('/:id', validateId, extractUserInfo, catchAsync(postsController.findOne));
 
     // GET /posts/:id/comments
-    api.get('/:id/comments', extractUserInfo, catchAsync(postsController.findPostComments));
+    api.get('/:id/comments', validateId, extractUserInfo, catchAsync(postsController.findPostComments));
 
     // GET /posts
     api.get('/', getPostFilters, extractUserInfo, catchAsync(postsController.findAll));
@@ -22,10 +22,10 @@ export default () => {
     api.post('/', jwtAuth, extractUserInfo, postValidator, catchAsync(postsController.create));
 
     // PUT /posts/:id
-    api.put('/:id', jwtAuth, extractUserInfo, postValidator, catchAsync(postsController.update));
+    api.put('/:id', validateId, jwtAuth, extractUserInfo, postValidator, catchAsync(postsController.update));
 
     // DELETE /posts/:id
-    api.delete('/:id', jwtAuth, extractUserInfo, catchAsync(postsController.remove));
+    api.delete('/:id', validateId, jwtAuth, extractUserInfo, catchAsync(postsController.remove));
 
     return api;
 };

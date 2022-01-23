@@ -38,7 +38,6 @@ const PostCard = ({ post: { id, title, body, createdAt, voteScore, commentCount,
                 value: newValue,
             })
         );
-        console.log('%cVoted!!!!!!!!!!!!!', 'color: green');
     };
 
     const handleDeletePost = () => {

@@ -33,7 +33,7 @@ const PostForm = ({ submitForm, initialValues }) => {
                     <Field
                         component="textarea"
                         className={classNames(
-                            'w-full p-3 border bg-transparent border-gray-300 rounded focus:outline-none focus:border-gray-600',
+                            'w-full h-48 p-3 border bg-transparent border-gray-300 rounded focus:outline-none focus:border-gray-600',
                             {
                                 'border-red-500': errors.body && touched.body,
                             }

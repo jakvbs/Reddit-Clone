@@ -54,7 +54,7 @@ export default {
 
         const post = await Post.findById(comment.post);
 
-        post.comments = post.comments.filter((c) => !c.equals(comment._id));
+        post.comments.pull(comment._id);
 
         await Promise.all([post.save(), ...comment.votes.map((v) => v.remove()), comment.remove()]);
 
