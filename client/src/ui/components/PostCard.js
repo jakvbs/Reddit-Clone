@@ -23,11 +23,14 @@ const PostCard = ({ post: { id, title, body, createdAt, voteScore, commentCount,
 
     const hasPermission = authenticated && (loggedUser?.isAdmin || loggedUser?.id === user.id);
 
+    const { voteLoading } = useSelector((state) => state.posts);
+
     const handleVote = (value) => {
         if (!authenticated) {
             history.push('/login');
             return;
         }
+        if (voteLoading) return;
 
         let newValue = value;
         if (value === userVote) newValue = 0;

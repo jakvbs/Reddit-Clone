@@ -10,7 +10,7 @@
     }
 
     .button {
-        @apply flex items-center justify-center w-32 text-sm font-bold border rounded-full;
+        @apply flex justify-center items-center w-32 text-sm font-bold rounded-full border;
     }
 
     .button.gray {

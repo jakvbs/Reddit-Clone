@@ -6,6 +6,10 @@ const UserSchema = mongoose.Schema(
         username: String,
         email: String,
         password: String,
+        imageUrl: {
+            type: String,
+            default: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y',
+        },
         isAdmin: {
             type: Boolean,
             default: false,
@@ -30,12 +34,11 @@ UserSchema.set('toJSON', {
 });
 
 UserSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) {
-        return next();
+    if (this.isModified('password')) {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
     }
 
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
     next();
 });
 

@@ -2,104 +2,62 @@ import types from './types';
 
 const defaultState = {
     loading: false,
-    errors: {},
+    error: null,
     pageNumber: 1,
-    sortOption: { sort: 'createdAt', order: 'desc' },
+    voteLoading: false,
 };
 
 export const postReducer = (state = defaultState, action) => {
     switch (action.type) {
         case types.POSTS_PAGE_REQUEST:
+        case types.POSTS_SORT_REQUEST:
+        case types.GET_POST_REQUEST:
+        case types.POST_CREATE_REQUEST:
+        case types.GET_SUB_POSTS_REQUEST:
             return {
                 ...state,
                 loading: true,
-                errors: {},
+                error: null,
+            };
+        case types.POST_VOTE_REQUEST:
+            return {
+                ...state,
+                voteLoading: true,
             };
         case types.POSTS_PAGE_SUCCESS:
             return {
                 ...state,
                 loading: false,
                 pageNumber: state.pageNumber + 1,
-                errors: {},
+                error: null,
             };
-        case types.POSTS_PAGE_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                errors: action.payload.response,
-            };
-        case types.POSTS_SORT_REQUEST:
-            return {
-                ...state,
-                loading: true,
-                errors: {},
-            };
+
         case types.POSTS_SORT_SUCCESS:
             return {
                 ...state,
                 loading: false,
                 pageNumber: 2,
-                errors: {},
-            };
-        case types.POSTS_SORT_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                errors: action.payload.response,
-            };
-        case types.GET_SUB_POSTS_REQUEST:
-            return {
-                ...state,
-                loading: true,
-                errors: {},
+                error: null,
             };
         case types.GET_SUB_POSTS_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                errors: {},
-            };
-        case types.GET_SUB_POSTS_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                errors: action.payload.response,
-            };
-        case types.POST_CREATE_REQUEST:
-            return {
-                ...state,
-                loading: true,
-                errors: {},
-            };
         case types.POST_CREATE_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                errors: {},
-            };
-        case types.POST_CREATE_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                errors: action.payload.response,
-            };
-        case types.POST_VOTE_REQUEST:
-            return {
-                ...state,
-                errors: {},
-                error: {},
-            };
         case types.POST_VOTE_SUCCESS:
             return {
                 ...state,
+                voteLoading: false,
                 loading: false,
-                errors: {},
+                error: null,
             };
+        case types.POSTS_PAGE_FAILURE:
+        case types.POSTS_SORT_FAILURE:
+        case types.GET_POST_FAILURE:
+        case types.POST_CREATE_FAILURE:
+        case types.GET_SUB_POSTS_FAILURE:
         case types.POST_VOTE_FAILURE:
             return {
                 ...state,
                 loading: false,
-                errors: action.payload.response,
+                error: action.payload.response,
             };
         default:
             return state;

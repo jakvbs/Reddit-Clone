@@ -10,11 +10,17 @@ const initialState = {
 export const authReducer = (state = initialState, action) => {
     switch (action.type) {
         case types.REGISTER_REQUEST:
+        case types.LOGIN_REQUEST:
+        case types.LOGOUT_REQUEST:
+        case types.VALIDATE_TOKEN_REQUEST:
             return {
                 ...state,
                 loading: true,
+                errors: {},
             };
         case types.REGISTER_SUCCESS:
+        case types.LOGIN_SUCCESS:
+        case types.VALIDATE_TOKEN_SUCCESS:
             return {
                 ...state,
                 loading: false,
@@ -23,34 +29,11 @@ export const authReducer = (state = initialState, action) => {
                 errors: {},
             };
         case types.REGISTER_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                errors: action.payload.response,
-            };
-        case types.LOGIN_REQUEST:
-            return {
-                ...state,
-                loading: true,
-            };
-        case types.LOGIN_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                authenticated: true,
-                user: action.payload,
-                errors: {},
-            };
         case types.LOGIN_FAILURE:
             return {
                 ...state,
                 loading: false,
                 errors: action.payload.response,
-            };
-        case types.LOGOUT_REQUEST:
-            return {
-                ...state,
-                loading: true,
             };
         case types.LOGOUT_SUCCESS:
             return {
@@ -61,29 +44,10 @@ export const authReducer = (state = initialState, action) => {
                 errors: {},
             };
         case types.LOGOUT_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                errors: action.payload.response,
-            };
-        case types.VALIDATE_TOKEN_REQUEST:
-            return {
-                ...state,
-                loading: true,
-            };
-        case types.VALIDATE_TOKEN_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                authenticated: true,
-                user: action.payload,
-                errors: {},
-            };
         case types.VALIDATE_TOKEN_FAILURE:
             return {
                 ...state,
                 loading: false,
-                // errors: action.payload.response,
             };
         default:
             return state;

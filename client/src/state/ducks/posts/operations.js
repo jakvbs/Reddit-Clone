@@ -179,14 +179,13 @@ export const getUserPosts = (userId) => {
 
 export const votePost = ({ postId, value }) => {
     return createAction({
-        endpoint: `${process.env.REACT_APP_API_URL}/votes`,
+        endpoint: `${process.env.REACT_APP_API_URL}/posts/${postId}/vote`,
         method: 'POST',
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            postId,
             value,
         }),
         types: [

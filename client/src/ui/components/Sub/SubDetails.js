@@ -16,7 +16,7 @@ const SubDetails = () => {
     const posts = useSelector((state) =>
         state.entities.posts.bySubName[subname]?.map((id) => state.entities.posts.byId[id])
     );
-    const { errors: subErrors } = useSelector((state) => state.subs);
+    const { errors: subsErrors } = useSelector((state) => state.subs);
     const { errors: postsErrors, loading: postsLoading } = useSelector((state) => state.posts);
 
     useEffect(() => {
@@ -42,7 +42,7 @@ const SubDetails = () => {
         );
     }
 
-    if (Object.keys(subErrors).length) {
+    if (Object.keys(subsErrors)?.length) {
         redirectToHomePage();
         return (
             <div className="pt-12">

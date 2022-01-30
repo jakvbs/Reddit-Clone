@@ -8,14 +8,12 @@ export default {
         const { user } = res.locals;
         const post = await Post.findById(id);
         if (!post) return next();
-        if (user) {
-            post.setUserVote(user);
-        }
+        if (user) post.setUserVote(user);
 
         return res.status(200).send(post);
     },
 
-    async findPostComments(req, res) {
+    async findPostComments(req, res, next) {
         const { id } = req.params;
         const { user } = res.locals;
 
@@ -24,9 +22,7 @@ export default {
             options: { sort: 'createdAt' },
         });
 
-        if (!post) {
-            return res.status(404).send({ message: 'Post not found' });
-        }
+        if (!post) return next();
 
         const { comments } = post;
 
@@ -37,12 +33,10 @@ export default {
         return res.status(200).send(comments);
     },
 
-    async findAll(req, res) {
+    async findAll(req, res, next) {
         const posts = await Post.paginate({ req });
 
-        if (!posts) {
-            return res.status(404).send({ message: 'No post has been created yet' });
-        }
+        if (!posts) return next();
 
         const { user } = res.locals;
 
@@ -51,6 +45,55 @@ export default {
         }
 
         return res.status(200).send(posts);
+    },
+
+    async vote(req, res, next) {
+        const { id } = req.params;
+        const { value } = req.body;
+        const { user } = res.locals;
+
+        const post = await Post.findById(id);
+
+        if (!post) return next();
+
+        const vote = await Vote.findOne({ user: user._id, post: post._id });
+
+        if ((!vote && value === 0) || value === vote?.value) {
+            res.sendStatus(400);
+        }
+
+        if (!vote) {
+            const newVote = new Vote({
+                user,
+                value,
+                post: post._id,
+            });
+
+            post.votes.push(newVote);
+            post.setUserVote(user);
+            await Promise.all([newVote.save(), post.save()]);
+
+            req.body = post;
+            return res.status(200).send(post);
+        }
+
+        if (value === 0) {
+            post.votes.pull(vote);
+            post.setUserVote(user);
+            await Promise.all([post.save(), vote.remove()]);
+
+            req.body = post;
+            return res.status(200).send(post);
+        }
+
+        vote.value = value;
+        post.votes.pull(vote);
+        post.votes.push(vote);
+        post.setUserVote(user);
+        await Promise.all([vote.save(), post.save()]);
+
+        req.body = post;
+        return res.status(200).send(post);
     },
 
     async create(req, res) {
@@ -71,19 +114,22 @@ export default {
             sub: findSub,
         });
 
-        findSub.posts.push(post._id);
+        findSub.posts.push(post);
 
         await Promise.all([post.save(), findSub.save()]);
 
+        req.body = post;
         return res.status(201).send(post);
     },
 
-    async update(req, res) {
+    async update(req, res, next) {
         const { id } = req.params;
         const post = await Post.findById(id);
 
-        if (!post) {
-            return res.status(404).send({ message: 'Post not found' });
+        if (!post) return next();
+
+        if (!res.locals.user.isAdmin && res.locals.user.username !== post.user.username) {
+            return res.sendStatus(403);
         }
 
         const { title, body } = req.body;
@@ -91,23 +137,24 @@ export default {
         post.title = title;
         post.body = body;
 
+        await post.save();
+
+        req.body = post;
         return res.status(201).send(post);
     },
 
-    async remove(req, res) {
+    async remove(req, res, next) {
         const { id } = req.params;
         const post = await Post.findById(id).populate(['comments', 'votes']);
 
-        if (!post) {
-            return res.status(404).send({ message: 'Post not found' });
-        }
+        if (!post) return next();
 
         if (!res.locals.user.isAdmin && res.locals.user.username !== post.user.username) {
-            return res.status(401).send({ message: 'Operation not permitted' });
+            return res.sendStatus(403);
         }
 
         const sub = await Sub.findById(post.sub._id);
-        sub.posts.pull(post._id);
+        sub.posts.pull(post);
 
         post.comments.forEach(async (comment) => {
             await Promise.all(comment.votes.map((voteId) => Vote.findByIdAndRemove(voteId)));
@@ -119,6 +166,7 @@ export default {
             sub.save(),
         ]);
 
+        req.body = post;
         return res.status(200).send(post);
     },
 };

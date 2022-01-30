@@ -34,8 +34,29 @@ export default {
         return res.status(200).send(comments);
     },
 
-    async findAll(req, res) {
-        const users = await User.find();
-        return res.status(200).send({ data: users });
+    async update(req, res) {
+        const { id } = req.params;
+        const { user } = res.locals;
+        if (!res.locals.user._id.equals(id)) {
+            return res.sendStatus(403);
+        }
+
+        const { imageUrl, username, email, password } = req.body;
+        const errors = {};
+        const [usernameAlreadyExists, emailAlreadyExists] = await Promise.all([
+            User.findOne({ username }),
+            User.findOne({ email }),
+        ]);
+        if (usernameAlreadyExists && !usernameAlreadyExists._id.equals(id)) errors.username = 'Username already exists';
+        if (emailAlreadyExists && !emailAlreadyExists._id.equals(id)) errors.email = 'Email already exists';
+        if (Object.keys(errors).length) return res.status(400).send(errors);
+
+        if (imageUrl) user.imageUrl = imageUrl;
+        if (username) user.username = username;
+        if (email) user.email = email;
+        if (password) user.password = password;
+
+        await user.save();
+        return res.status(200).send(user);
     },
 };

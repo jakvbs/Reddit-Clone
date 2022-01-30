@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import config from '../config/config';
 import User from '../models/User';
 
 export default {
@@ -11,12 +12,8 @@ export default {
             User.findOne({ email }),
         ]);
         if (usernameAlreadyExists) errors.username = 'Username already exists';
-
         if (emailAlreadyExists) errors.email = 'Email already exists';
-
-        if (Object.keys(errors).length) {
-            return res.status(400).send(errors);
-        }
+        if (Object.keys(errors).length) return res.status(400).send(errors);
 
         const user = await User.create({ username, email, password });
 
@@ -24,14 +21,14 @@ export default {
             {
                 id: user._id,
             },
-            process.env.JWT_SECRET,
+            config.jwt_secret,
             { expiresIn: '1d' }
         );
 
         return res
             .cookie('token', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: config.env === 'production',
                 sameSite: 'strict',
                 maxAge: 24 * 60 * 60 * 1000,
                 path: '/',
@@ -58,14 +55,14 @@ export default {
             {
                 id: user._id,
             },
-            process.env.JWT_SECRET,
+            config.jwt_secret,
             { expiresIn: '1d' }
         );
 
         return res
             .cookie('token', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: config.env === 'production',
                 sameSite: 'strict',
                 maxAge: 24 * 60 * 60 * 1000,
                 path: '/',
@@ -76,8 +73,8 @@ export default {
     async logout(req, res) {
         res.clearCookie('token');
         res.clearCookie('session');
-        req.logout();
-        return res.send({ message: 'Logged out' });
+        await req.logout();
+        return res.sendStatus(200);
     },
 
     async me(req, res) {

@@ -129,6 +129,7 @@ const postReducer = (
                 },
             };
         case 'POST_ADD':
+            if (state.byId[Object.keys(actionEntities)[0]]) return state;
             return {
                 byId: {
                     ...Object.keys(actionEntities).reduce(
@@ -159,6 +160,7 @@ const postReducer = (
                       },
             };
         case 'POST_EDIT':
+            if (!state.byId[Object.keys(actionEntities)[0]]) return state;
             return {
                 byId: {
                     ...state.byId,
@@ -182,6 +184,7 @@ const postReducer = (
                 byUserId: state.byUserId,
             };
         case 'POST_DELETE':
+            if (!state.byId[Object.keys(actionEntities)[0]]) return state;
             return {
                 // delete post from byId
                 byId: _.omit(state.byId, actionEntities),

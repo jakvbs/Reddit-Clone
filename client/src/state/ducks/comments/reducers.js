@@ -3,6 +3,7 @@ import types from './types';
 const defaultState = {
     loading: false,
     errors: {},
+    voteLoading: false,
 };
 
 export const commentReducer = (state = defaultState, action) => {
@@ -49,13 +50,12 @@ export const commentReducer = (state = defaultState, action) => {
         case types.COMMENT_VOTE_REQUEST:
             return {
                 ...state,
-                loading: true,
-                errors: {},
+                voteLoading: true,
             };
         case types.COMMENT_VOTE_SUCCESS:
             return {
-                loading: false,
-                errors: {},
+                ...state,
+                voteLoading: false,
             };
         case types.COMMENT_VOTE_FAILURE:
             return {

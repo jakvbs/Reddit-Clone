@@ -28,6 +28,7 @@ export const Post = PropTypes.shape({
 export const User = PropTypes.shape({
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
+    imageUrl: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
     updatedAt: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,

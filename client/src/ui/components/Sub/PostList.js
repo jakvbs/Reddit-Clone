@@ -1,5 +1,4 @@
-/* eslint-disable no-nested-ternary */
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import PostCard from '../PostCard';
 
 const PostList = ({ postsLoading, postsErrors, posts }) => {

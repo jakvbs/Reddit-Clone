@@ -56,7 +56,7 @@ export const addComment = (comment) => {
 
 export const voteComment = ({ postId, commentId, value }) => {
     return createAction({
-        endpoint: `${process.env.REACT_APP_API_URL}/votes`,
+        endpoint: `${process.env.REACT_APP_API_URL}/comments/${commentId}/vote`,
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -64,7 +64,6 @@ export const voteComment = ({ postId, commentId, value }) => {
         },
         body: JSON.stringify({
             postId,
-            commentId,
             value,
         }),
         types: [

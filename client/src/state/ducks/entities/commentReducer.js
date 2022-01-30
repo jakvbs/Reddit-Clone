@@ -14,6 +14,7 @@ const commentReducer = (
     switch (actionType) {
         case 'GET_POST_COMMENTS':
         case 'COMMENT_ADD':
+            if (state.byId[Object.keys(actionEntities)[0]]) return state;
             return {
                 byId: {
                     ...state.byId,
@@ -50,6 +51,7 @@ const commentReducer = (
                 byPostId: state.byPostId,
             };
         case 'COMMENT_DELETE':
+            if (!state.byId[Object.keys(actionEntities)[0]]) return state;
             return {
                 // delete comment from byId
                 byId: _.omit(state.byId, actionEntities),

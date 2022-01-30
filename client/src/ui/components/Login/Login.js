@@ -11,7 +11,7 @@ const Login = () => {
     return (
         <main className="flex bg-dark-600 flex-col justify-center items-center pl-6 h-screen w-screen">
             <div className="w-70 flex flex-col">
-                <h1 className="mb-2 text-lg font-medium">Login</h1>
+                <h1 className="mb-2 text-lg font-medium">Sign in</h1>
                 <div
                     className="flex w-full justify-center py-3 rounded-md text-white items-center font-bold mb-5 cursor-pointer bg-google"
                     onClick={google}
@@ -26,7 +26,7 @@ const Login = () => {
                 </div>
                 <LoginForm />
                 <small>
-                    New to Ugedit?
+                    Need an account?
                     <Link to="/register" className="ml-1 text-blue-500 uppercase">
                         Sign Up
                     </Link>

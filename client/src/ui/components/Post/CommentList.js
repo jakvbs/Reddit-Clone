@@ -4,17 +4,38 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { useConfirm } from 'material-ui-confirm';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { deleteComment } from '../../../state/ducks/comments/operations';
+import { Link, useHistory } from 'react-router-dom';
+import { deleteComment, voteComment } from '../../../state/ducks/comments/operations';
 
 dayjs.extend(relativeTime);
 
-const CommentList = ({ comments, vote }) => {
+const CommentList = ({ comments }) => {
+    const history = useHistory();
     const confirm = useConfirm();
     const dispatch = useDispatch();
     const { authenticated, user } = useSelector((state) => state.auth);
+    const { voteLoading } = useSelector((state) => state.comments);
 
     const hasPermission = (comment) => authenticated && (user?.isAdmin || user?.id === comment.user.id);
+
+    const handleVote = (comment, value) => {
+        if (!authenticated) {
+            history.push('/login');
+            return;
+        }
+        if (voteLoading) return;
+
+        let newValue = value;
+        if (value === comment.userVote) newValue = 0;
+
+        dispatch(
+            voteComment({
+                commentId: comment.id,
+                postId: comment.post.id,
+                value: newValue,
+            })
+        );
+    };
 
     const handleDeleteComment = (commentId) => {
         confirm({
@@ -37,7 +58,7 @@ const CommentList = ({ comments, vote }) => {
                 {/* Upvote */}
                 <div
                     className="w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-dark-icon_hover hover:text-red-500"
-                    onClick={() => vote(1, comment)}
+                    onClick={() => handleVote(comment, 1)}
                 >
                     <i
                         className={classNames('icon-arrow-up', {
@@ -49,7 +70,7 @@ const CommentList = ({ comments, vote }) => {
                 {/* Downvote */}
                 <div
                     className="w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-dark-icon_hover hover:text-blue-600"
-                    onClick={() => vote(-1, comment)}
+                    onClick={() => handleVote(comment, -1)}
                 >
                     <i
                         className={classNames('icon-arrow-down', {

@@ -1,5 +1,5 @@
 export function notFound(req, res, next) {
-    const err = new Error('404 page not found');
+    const err = new Error('Not Found');
     err.status = 404;
     next(err);
 }
@@ -12,5 +12,5 @@ export function catchAsync(fn) {
 
 export function catchErrors(err, req, res) {
     res.status(err.status || 500);
-    res.send({ message: err.message });
+    res.send(err.message);
 }

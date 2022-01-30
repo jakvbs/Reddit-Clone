@@ -35,6 +35,13 @@ const loginSchema = Joi.object({
     password: Joi.string().required(),
 });
 
+const userSchema = Joi.object({
+    imageUrl: Joi.string().uri(),
+    username: Joi.string().min(3).max(15),
+    email: Joi.string().email(),
+    password: Joi.string().min(8).max(64),
+});
+
 const subSchema = Joi.object({
     name: Joi.string().min(3).max(25).required(),
     title: Joi.string().min(3).max(50).required(),
@@ -55,11 +62,11 @@ const commentSchema = Joi.object({
 const voteSchema = Joi.object({
     value: Joi.number().min(-1).max(1).required(),
     postId: Joi.string(),
-    commentId: Joi.string(),
 });
 
 export const registerValidator = validateBody(registerSchema);
 export const loginValidator = validateBody(loginSchema);
+export const userValidator = validateBody(userSchema);
 export const subValidator = validateBody(subSchema);
 export const postValidator = validateBody(postSchema);
 export const commentValidator = validateBody(commentSchema);

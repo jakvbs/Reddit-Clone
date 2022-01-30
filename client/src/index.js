@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, useDispatch } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
+import useMqttSub from './hooks/useMqttSub';
 import Routes from './routes';
 import { validateToken } from './state/ducks/auth/operations';
 import store from './state/store';
@@ -16,6 +17,7 @@ Axios.defaults.withCredentials = true;
 Axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 const App = () => {
+    useMqttSub();
     const dispatch = useDispatch();
 
     useEffect(() => {

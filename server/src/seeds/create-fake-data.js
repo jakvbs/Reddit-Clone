@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { LoremIpsum } from 'lorem-ipsum';
 import mongoose from 'mongoose';
-import dbConfig from '../config/database';
 import Comment from '../models/Comment';
 import Post from '../models/Post';
 import Sub from '../models/Sub';
@@ -37,7 +36,10 @@ const postCount = 100;
 const commentCount = 200;
 
 (async () => {
-    mongoose.connect(process.env.MONGODB_URI, dbConfig.settings);
+    mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
     mongoose.connection.on('connected', () => {
         console.log('MongoDB connection open');
     });

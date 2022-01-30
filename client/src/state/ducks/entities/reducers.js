@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import commentReducer from './commentReducer';
 import postReducer from './postReducer';
 import subReducer from './subReducer';

@@ -7,8 +7,8 @@ const UserSideBar = ({ userInfo }) => {
             <div className="bg-dark-400 border border-dark-50 rounded">
                 <div className="p-3 bg-blue-banner rounded-t">
                     <img
-                        src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-                        alt="user profile"
+                        src={userInfo.imageUrl}
+                        alt="user avatar"
                         className="w-16 h-16 mx-auto border-2 border-white rounded-full"
                     />
                 </div>

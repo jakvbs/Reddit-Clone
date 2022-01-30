@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import postsController from '../controllers/postsController';
-import jwtAuth from '../middlewares/auth';
+import auth from '../middlewares/auth';
 import { catchAsync } from '../middlewares/errors';
 import extractUserInfo from '../middlewares/extractUser';
 import { getPostFilters } from '../middlewares/filters';
-import { postValidator, validateId } from '../middlewares/validators';
+import mqttPublish from '../middlewares/mqttPublish';
+import { postValidator, validateId, voteValidator } from '../middlewares/validators';
 
 export default () => {
     const api = Router();
@@ -18,14 +19,40 @@ export default () => {
     // GET /posts
     api.get('/', getPostFilters, extractUserInfo, catchAsync(postsController.findAll));
 
+    // POST /posts/:id/vote
+    api.post(
+        '/:id/vote',
+        validateId,
+        auth,
+        extractUserInfo,
+        voteValidator,
+        mqttPublish('posts/vote'),
+        catchAsync(postsController.vote)
+    );
+
     // POST /posts
-    api.post('/', jwtAuth, extractUserInfo, postValidator, catchAsync(postsController.create));
+    api.post('/', auth, extractUserInfo, postValidator, mqttPublish('posts/add'), catchAsync(postsController.create));
 
     // PUT /posts/:id
-    api.put('/:id', validateId, jwtAuth, extractUserInfo, postValidator, catchAsync(postsController.update));
+    api.put(
+        '/:id',
+        validateId,
+        auth,
+        extractUserInfo,
+        postValidator,
+        mqttPublish('posts/edit'),
+        catchAsync(postsController.update)
+    );
 
     // DELETE /posts/:id
-    api.delete('/:id', validateId, jwtAuth, extractUserInfo, catchAsync(postsController.remove));
+    api.delete(
+        '/:id',
+        validateId,
+        auth,
+        extractUserInfo,
+        mqttPublish('posts/delete'),
+        catchAsync(postsController.remove)
+    );
 
     return api;
 };

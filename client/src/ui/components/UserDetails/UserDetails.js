@@ -10,7 +10,6 @@ const UserDetails = () => {
     const { id } = useParams();
     const [error, setError] = useState(null);
     const [userInfo, setUserInfo] = useState(null);
-    const [userActivity] = useState([]);
 
     const dispatch = useDispatch();
     const posts = useSelector((state) =>
@@ -21,28 +20,25 @@ const UserDetails = () => {
         Axios.get(`/users/${id}`)
             .then(({ data }) => setUserInfo(data))
             .catch((err) => setError(err.message));
-
-        console.log(posts);
     }, []);
 
     useEffect(() => {
         if (!posts) {
             dispatch(getUserPosts(id));
         }
-        console.log(posts);
     }, [posts]);
 
     if (error) {
         return (
             <div className="container flex pt-16">
                 <div className="w-full px-4 md:w-160 md:p-0">
-                    <p className="text-lg text-center">{error}</p>
+                    <p className="text-lg text-center">{error.message}</p>
                 </div>
             </div>
         );
     }
 
-    if (!userActivity || !userInfo || !posts) {
+    if (!userInfo) {
         return (
             <div className="container flex pt-16">
                 <div className="w-full px-4 md:w-160 md:p-0">
@@ -55,9 +51,7 @@ const UserDetails = () => {
     return (
         <div className="container flex pt-16">
             <div className="w-160">
-                {posts.map((post) => (
-                    <PostCard key={post.id} post={post} />
-                ))}
+                {posts ? posts.map((post) => <PostCard key={post.id} post={post} />) : 'The is no posts yet.'}
             </div>
             <UserSideBar userInfo={userInfo} />
         </div>

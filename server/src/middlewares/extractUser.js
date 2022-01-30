@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import config from '../config/config';
 import User from '../models/User';
 
 export default async (req, res, next) => {
@@ -9,10 +10,9 @@ export default async (req, res, next) => {
 
     try {
         const { token } = req.cookies;
-        if (!token) {
-            return next();
-        }
-        const { id } = jwt.verify(token, process.env.JWT_SECRET);
+        if (!token) return next();
+
+        const { id } = jwt.verify(token, config.jwt_secret);
         const user = await User.findById(id);
 
         res.locals.user = user;

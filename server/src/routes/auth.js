@@ -32,18 +32,13 @@ export default () => {
         }
     });
 
-    api.get('/login/failed', (req, res) => {
-        res.status(401).send({
-            success: false,
-            message: 'failure',
-        });
-    });
+    api.get('/login/failed', (req, res) => res.sendStatus(401));
 
     api.get('/google', passport.authenticate('google', { scope: ['profile'] }));
 
-    api.get('/google/redirect', passport.authenticate('google'), (req, res) => {
-        res.status(301).redirect('http://localhost:3000/');
-    });
+    api.get('/google/redirect', passport.authenticate('google'), (req, res) =>
+        res.status(301).redirect('http://localhost:3000/')
+    );
 
     return api;
 };

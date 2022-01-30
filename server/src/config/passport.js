@@ -2,6 +2,7 @@ import passport from 'passport';
 import passportGoogle from 'passport-google-oauth20';
 import passportJWT from 'passport-jwt';
 import User from '../models/User';
+import config from './config';
 
 const JWTStrategy = passportJWT.Strategy;
 const GoogleStrategy = passportGoogle.Strategy;
@@ -23,23 +24,20 @@ const cookieExtractor = (req) => {
 };
 
 export default () => {
-    const config = {
+    const jwtConfig = {
         jwtFromRequest: cookieExtractor,
-        secretOrKey: process.env.JWT_SECRET,
+        secretOrKey: config.jwt_secret,
     };
-    passport.use(new JWTStrategy(config, verifyCallback));
+    passport.use(new JWTStrategy(jwtConfig, verifyCallback));
 
     passport.use(
         new GoogleStrategy(
             {
-                clientID: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: '/api/auth/google/redirect',
+                clientID: config.google_client_id,
+                clientSecret: config.google_client_secret,
+                callbackURL: config.google_callback_url,
             },
             async (accessToken, refreshToken, profile, done) => {
-                console.log('xxxxxxxx');
-                console.log(profile);
-                console.log('xxxxxxxx');
                 // check if user already exists in our own db
                 const currentUser = await User.findOne({ googleId: profile.id });
                 if (currentUser) {

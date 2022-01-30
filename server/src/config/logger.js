@@ -1,5 +1,6 @@
 import winston from 'winston';
 import WinstonDailyRotateFile from 'winston-daily-rotate-file';
+import config from './config';
 
 const transport = new WinstonDailyRotateFile({
     filename: '%DATE%.log',
@@ -17,7 +18,7 @@ const logger = winston.createLogger({
     exitOnError: false,
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (config.env !== 'production') {
     logger.add(
         new winston.transports.Console({
             format: winston.format.simple(),
