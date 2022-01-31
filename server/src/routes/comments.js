@@ -7,47 +7,47 @@ import mqttPublish from '../middlewares/mqttPublish';
 import { commentValidator, validateId, voteValidator } from '../middlewares/validators';
 
 export default () => {
-    const api = Router();
+	const api = Router();
 
-    // GET /comments/:id
-    api.get('/:id', validateId, catchAsync(commentsController.findOne));
+	// GET /comments/:id
+	api.get('/:id', validateId, catchAsync(commentsController.findOne));
 
-    // GET /comments
-    api.get('/', catchAsync(commentsController.findAll));
+	// GET /comments
+	api.get('/', catchAsync(commentsController.findAll));
 
-    // POST /comments/:id/vote
-    api.post(
-        '/:id/vote',
-        validateId,
-        auth,
-        extractUserInfo,
-        voteValidator,
-        mqttPublish('comments/vote'),
-        catchAsync(commentsController.vote)
-    );
+	// POST /comments/:id/vote
+	api.post(
+		'/:id/vote',
+		validateId,
+		auth,
+		extractUserInfo,
+		voteValidator,
+		mqttPublish('comments/vote'),
+		catchAsync(commentsController.vote)
+	);
 
-    // POST /comments
-    api.post(
-        '/',
-        auth,
-        extractUserInfo,
-        commentValidator,
-        mqttPublish('comments/add'),
-        catchAsync(commentsController.create)
-    );
+	// POST /comments
+	api.post(
+		'/',
+		auth,
+		extractUserInfo,
+		commentValidator,
+		mqttPublish('comments/create'),
+		catchAsync(commentsController.create)
+	);
 
-    // PUT /comments/:id
-    api.put('/:id', validateId, auth, extractUserInfo, commentValidator, catchAsync(commentsController.update));
+	// PUT /comments/:id
+	api.put('/:id', validateId, auth, extractUserInfo, commentValidator, catchAsync(commentsController.update));
 
-    // DELETE /comments/:id
-    api.delete(
-        '/:id',
-        validateId,
-        auth,
-        extractUserInfo,
-        mqttPublish('comments/delete'),
-        catchAsync(commentsController.remove)
-    );
+	// DELETE /comments/:id
+	api.delete(
+		'/:id',
+		validateId,
+		auth,
+		extractUserInfo,
+		mqttPublish('comments/remove'),
+		catchAsync(commentsController.remove)
+	);
 
-    return api;
+	return api;
 };

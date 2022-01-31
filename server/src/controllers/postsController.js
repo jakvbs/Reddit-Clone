@@ -1,172 +1,206 @@
+import _ from 'lodash';
 import Post from '../models/Post';
 import Sub from '../models/Sub';
 import Vote from '../models/Vote';
 
 export default {
-    async findOne(req, res, next) {
-        const { id } = req.params;
-        const { user } = res.locals;
-        const post = await Post.findById(id);
-        if (!post) return next();
-        if (user) post.setUserVote(user);
+	async findOne(req, res, next) {
+		const { id } = req.params;
+		const { user } = res.locals;
+		const post = await Post.findById(id);
+		if (!post) return next();
+		if (user) post.setUserVote(user);
 
-        return res.status(200).send(post);
-    },
+		return res.status(200).send(post);
+	},
 
-    async findPostComments(req, res, next) {
-        const { id } = req.params;
-        const { user } = res.locals;
+	async findPostComments(req, res, next) {
+		const { id } = req.params;
+		const { user } = res.locals;
 
-        const post = await Post.findById(id).populate({
-            path: 'comments',
-            options: { sort: 'createdAt' },
-        });
+		const post = await Post.findById(id).populate({
+			path: 'comments',
+			options: { sort: 'createdAt' },
+		});
 
-        if (!post) return next();
+		if (!post) return next();
 
-        const { comments } = post;
+		const { comments } = post;
 
-        if (user) {
-            comments.forEach((comment) => comment.setUserVote(user));
-        }
+		if (user) {
+			comments.forEach((comment) => comment.setUserVote(user));
+		}
 
-        return res.status(200).send(comments);
-    },
+		return res.status(200).send(comments);
+	},
 
-    async findAll(req, res, next) {
-        const posts = await Post.paginate({ req });
+	async findAll(req, res, next) {
+		const posts = await Post.paginate({ req });
 
-        if (!posts) return next();
+		if (!posts) return next();
 
-        const { user } = res.locals;
+		const { user } = res.locals;
 
-        if (user) {
-            posts.forEach((post) => post.setUserVote(user));
-        }
+		if (user) {
+			posts.forEach((post) => post.setUserVote(user));
+		}
 
-        return res.status(200).send(posts);
-    },
+		return res.status(200).send(posts);
+	},
 
-    async vote(req, res, next) {
-        const { id } = req.params;
-        const { value } = req.body;
-        const { user } = res.locals;
+	async vote(req, res, next) {
+		const { id } = req.params;
+		const { value } = req.body;
+		const { user } = res.locals;
 
-        const post = await Post.findById(id);
+		const post = await Post.findById(id);
 
-        if (!post) return next();
+		if (!post) return next();
 
-        const vote = await Vote.findOne({ user: user._id, post: post._id });
+		const vote = await Vote.findOne({ user: user._id, post: post._id });
 
-        if ((!vote && value === 0) || value === vote?.value) {
-            res.sendStatus(400);
-        }
+		if ((!vote && value === 0) || value === vote?.value) {
+			return res.status(200).send(post);
+		}
 
-        if (!vote) {
-            const newVote = new Vote({
-                user,
-                value,
-                post: post._id,
-            });
+		if (!vote) {
+			const newVote = new Vote({
+				user,
+				value,
+				post: post._id,
+			});
 
-            post.votes.push(newVote);
-            post.setUserVote(user);
-            await Promise.all([newVote.save(), post.save()]);
+			post.votes.push(newVote);
+			await Promise.all([newVote.save(), post.save()]);
 
-            req.body = post;
-            return res.status(200).send(post);
-        }
+			post.setUserVote(user);
+			req.body = _.omit(post.toJSON(), ['userVote']);
+			try {
+				res.mqttClient.sendMessage(`private/${post.user.username}`, 'Your post has been voted');
+			} catch (error) {
+				console.log(error);
+			}
+			return res.status(200).send(post);
+		}
 
-        if (value === 0) {
-            post.votes.pull(vote);
-            post.setUserVote(user);
-            await Promise.all([post.save(), vote.remove()]);
+		if (value === 0) {
+			post.votes.pull(vote);
+			post.setUserVote(user);
+			await Promise.all([post.save(), vote.remove()]);
 
-            req.body = post;
-            return res.status(200).send(post);
-        }
+			post.setUserVote(user);
+			req.body = _.omit(post.toJSON(), ['userVote']);
+			try {
+				res.mqttClient.sendMessage(`private/${post.user.username}`, 'Your post has been voted');
+			} catch (error) {
+				console.log(error);
+			}
+			return res.status(200).send(post);
+		}
 
-        vote.value = value;
-        post.votes.pull(vote);
-        post.votes.push(vote);
-        post.setUserVote(user);
-        await Promise.all([vote.save(), post.save()]);
+		vote.value = value;
+		post.votes.pull(vote);
+		post.votes.push(vote);
+		post.setUserVote(user);
+		await Promise.all([vote.save(), post.save()]);
 
-        req.body = post;
-        return res.status(200).send(post);
-    },
+		post.setUserVote(user);
+		req.body = _.omit(post.toJSON(), ['userVote']);
+		try {
+			res.mqttClient.sendMessage(`private/${post.user.username}`, 'Your post has been voted');
+		} catch (error) {
+			console.log(error);
+		}
+		return res.status(200).send(post);
+	},
 
-    async create(req, res) {
-        const { title, body, subname } = req.body;
+	async create(req, res) {
+		const { title, body, subname } = req.body;
 
-        const { user } = res.locals;
+		const { user } = res.locals;
 
-        const findSub = await Sub.findOne({ name: subname });
+		const findSub = await Sub.findOne({ name: subname });
 
-        if (!findSub) {
-            return res.status(404).send({ message: 'Sub not found' });
-        }
+		if (!findSub) {
+			return res.status(404).send({ message: 'Sub not found' });
+		}
 
-        const post = new Post({
-            title,
-            body,
-            user,
-            sub: findSub,
-        });
+		const post = new Post({
+			title,
+			body,
+			user,
+			sub: findSub,
+		});
 
-        findSub.posts.push(post);
+		findSub.posts.push(post._id);
 
-        await Promise.all([post.save(), findSub.save()]);
+		await Promise.all([post.save(), findSub.save()]);
 
-        req.body = post;
-        return res.status(201).send(post);
-    },
+		req.body = post.toJSON();
+		try {
+			res.mqttClient.sendMessage(`private/${post.user.username}`, 'Your post has been created');
+		} catch (error) {
+			console.log(error);
+		}
 
-    async update(req, res, next) {
-        const { id } = req.params;
-        const post = await Post.findById(id);
+		return res.status(201).send(post);
+	},
 
-        if (!post) return next();
+	async update(req, res, next) {
+		const { id } = req.params;
+		const post = await Post.findById(id);
 
-        if (!res.locals.user.isAdmin && res.locals.user.username !== post.user.username) {
-            return res.sendStatus(403);
-        }
+		if (!post) return next();
 
-        const { title, body } = req.body;
+		if (!res.locals.user.isAdmin && res.locals.user.username !== post.user.username) {
+			return res.sendStatus(401);
+		}
 
-        post.title = title;
-        post.body = body;
+		const { title, body } = req.body;
 
-        await post.save();
+		post.title = title;
+		post.body = body;
 
-        req.body = post;
-        return res.status(201).send(post);
-    },
+		await post.save();
 
-    async remove(req, res, next) {
-        const { id } = req.params;
-        const post = await Post.findById(id).populate(['comments', 'votes']);
+		req.body = post.toJSON();
+		try {
+			res.mqttClient.sendMessage(`private/${post.user.username}`, 'Your post has been updated');
+		} catch (error) {
+			console.log(error);
+		}
+		return res.status(200).send(post);
+	},
 
-        if (!post) return next();
+	async remove(req, res, next) {
+		const { id } = req.params;
+		const post = await Post.findById(id).populate(['comments', 'votes']);
 
-        if (!res.locals.user.isAdmin && res.locals.user.username !== post.user.username) {
-            return res.sendStatus(403);
-        }
+		if (!post) return next();
 
-        const sub = await Sub.findById(post.sub._id);
-        sub.posts.pull(post);
+		if (!res.locals.user.isAdmin && res.locals.user.username !== post.user.username) {
+			return res.sendStatus(401);
+		}
 
-        post.comments.forEach(async (comment) => {
-            await Promise.all(comment.votes.map((voteId) => Vote.findByIdAndRemove(voteId)));
-        });
+		const sub = await Sub.findById(post.sub._id);
+		sub.posts.pull(post);
 
-        await Promise.all([
-            ...post.votes.map((vote) => vote.remove(), ...post.comments.map((comment) => comment.remove())),
-            post.remove(),
-            sub.save(),
-        ]);
+		post.comments.forEach(async (comment) => {
+			await Promise.all(comment.votes.map((voteId) => Vote.findByIdAndRemove(voteId)));
+		});
 
-        req.body = post;
-        return res.status(200).send(post);
-    },
+		await Promise.all([
+			...post.votes.map((vote) => vote.remove(), ...post.comments.map((comment) => comment.remove())),
+			post.remove(),
+			sub.save(),
+		]);
+
+		req.body = post.toJSON();
+		try {
+			res.mqttClient.sendMessage(`private/${post.user.username}`, 'Your post has been deleted');
+		} catch (error) {
+			console.log(error);
+		}
+		return res.status(200).send(post);
+	},
 };

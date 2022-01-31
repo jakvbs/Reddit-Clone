@@ -27,12 +27,12 @@ mqttClient.connect();
 const app = express();
 app.use(helmet());
 app.use(
-    cors({
-        // origin: 'http://localhost:3000',
-        origin: true,
-        methods: 'GET,POST,PUT,DELETE',
-        credentials: true,
-    })
+	cors({
+		// origin: 'http://localhost:3000',
+		origin: true,
+		methods: 'GET,POST,PUT,DELETE',
+		credentials: true,
+	})
 );
 app.use(cookieParser());
 app.use(express.json());
@@ -40,18 +40,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('combined', { stream: logger.stream }));
 
 app.use(
-    cookieSession({
-        name: 'session',
-        keys: [config.cookie_name],
-        maxAge: 24 * 60 * 60 * 1000,
-    })
+	cookieSession({
+		name: 'session',
+		keys: [config.cookie_name],
+		maxAge: 24 * 60 * 60 * 1000,
+	})
 );
 app.use(passport.initialize(undefined));
 app.use(passport.session(undefined));
 
 app.use((req, res, next) => {
-    res.mqttClient = mqttClient;
-    next();
+	res.mqttClient = mqttClient;
+	next();
 });
 
 // routes config
@@ -71,5 +71,5 @@ app.use(catchErrors);
 // }
 
 app.listen(config.port || 8080, () => {
-    console.log(`Server is running on port ${config.port}`);
+	console.log(`Server is running on port ${config.port}`);
 });
