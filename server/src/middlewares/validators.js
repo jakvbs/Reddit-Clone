@@ -50,7 +50,7 @@ const subSchema = Joi.object({
 
 const postSchema = Joi.object({
 	title: Joi.string().min(2).max(100).required(),
-	body: Joi.string(),
+	body: Joi.string().min(2).max(1000).required(),
 	subname: Joi.string().required(),
 });
 

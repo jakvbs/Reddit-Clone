@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
+import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -27,6 +28,7 @@ const CommentCreate = () => {
 			})
 		);
 		resetForm();
+		Cookies.remove(`comments/${id}`);
 	};
 
 	return (
@@ -41,13 +43,13 @@ const CommentCreate = () => {
 					</p>
 					<Formik
 						initialValues={{
-							body: '',
+							body: Cookies.get(`comments/${id}`) || '',
 						}}
 						validationSchema={CommentSchema}
 						onSubmit={submitComment}
 						enableReinitialize
 					>
-						{({ errors, touched, values }) => (
+						{({ errors, touched, values, setValues }) => (
 							<Form>
 								<div className="mb-2">
 									<Field
@@ -60,6 +62,14 @@ const CommentCreate = () => {
 										)}
 										name="body"
 										type="text"
+										value={values.body}
+										onChange={(e) => {
+											Cookies.set(`comments/${id}`, e.target.value);
+											setValues({
+												...values,
+												body: e.target.value,
+											});
+										}}
 									/>
 									<ErrorMessage className="font-medium text-red-600 " name="body" component="small" />
 								</div>
