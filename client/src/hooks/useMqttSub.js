@@ -11,6 +11,7 @@ const topics = {
 	POST_DELETE: 'posts/remove',
 	COMMENT_VOTE: 'comments/vote',
 	COMMENT_ADD: 'comments/create',
+	COMMENT_EDIT: 'comments/update',
 	COMMENTS_DELETE: 'comments/remove',
 	EASTER_EGG: 'easter_egg',
 };
@@ -84,6 +85,17 @@ const useMqttSub = () => {
 						},
 					});
 				}
+				if (topic === topics.COMMENT_VOTE) {
+					const data = JSON.parse(message);
+					const { entities } = normalize(data, commentSchema);
+					dispatch({
+						type: 'MQTT',
+						payload: entities,
+						meta: {
+							actionType: 'COMMENT_VOTE',
+						},
+					});
+				}
 				if (topic === topics.COMMENT_ADD) {
 					const data = JSON.parse(message);
 					const { entities } = normalize(data, commentSchema);
@@ -95,6 +107,17 @@ const useMqttSub = () => {
 						},
 					});
 				}
+				if (topic === topics.COMMENT_EDIT) {
+					const data = JSON.parse(message);
+					const { entities } = normalize(data, commentSchema);
+					dispatch({
+						type: 'MQTT',
+						payload: entities,
+						meta: {
+							actionType: 'COMMENT_EDIT',
+						},
+					});
+				}
 				if (topic === topics.COMMENTS_DELETE) {
 					const data = JSON.parse(message);
 					const { entities } = normalize(data, commentSchema);
@@ -103,17 +126,6 @@ const useMqttSub = () => {
 						payload: entities,
 						meta: {
 							actionType: 'COMMENT_DELETE',
-						},
-					});
-				}
-				if (topic === topics.COMMENT_VOTE) {
-					const data = JSON.parse(message);
-					const { entities } = normalize(data, commentSchema);
-					dispatch({
-						type: 'MQTT',
-						payload: entities,
-						meta: {
-							actionType: 'COMMENT_VOTE',
 						},
 					});
 				}
