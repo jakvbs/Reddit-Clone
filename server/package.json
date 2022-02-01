@@ -5,9 +5,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "install-client": "cd ../client && npm install --only=production",
-    "build": "cd ../client && npm run build",
-    "heroku-postbuild": "npm run install-client && npm run build",
     "start": "NODE_OPTIONS='--experimental-specifier-resolution=node' node src/server.js",
     "dev": "NODE_OPTIONS='--experimental-specifier-resolution=node' nodemon src/server.js",
     "lint": "eslint .",

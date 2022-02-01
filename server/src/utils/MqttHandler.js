@@ -1,9 +1,10 @@
 import mqtt from 'async-mqtt';
+import config from '../config/config';
 
 class MqttHandler {
 	constructor() {
 		this.mqttClient = null;
-		this.host = 'mqtt://localhost:1883';
+		this.host = config.mqttUrl;
 	}
 
 	connect() {

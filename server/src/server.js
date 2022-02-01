@@ -30,7 +30,6 @@ app.use(
 	cors({
 		// origin: 'http://localhost:3000',
 		origin: true,
-		methods: 'GET,POST,PUT,DELETE',
 		credentials: true,
 	})
 );
@@ -55,7 +54,7 @@ app.use((req, res, next) => {
 });
 
 // routes config
-app.get('/api', (req, res) => res.send(`API is running, appid: ${process.env.APPID || 'dev'}`));
+app.get('/api', (req, res) => res.send(`API is running on port ${config.port}`));
 app.use('/api/auth', auth());
 app.use('/api/users', users());
 app.use('/api/subs', subs());

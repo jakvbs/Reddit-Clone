@@ -10,7 +10,7 @@ const settings = {
 };
 
 export default () => {
-	mongoose.connect(config.mongodb_uri, settings);
+	mongoose.connect(`mongodb://${config.mongoHost}:${config.mongoPort}/${config.mongoDb}`, settings);
 
 	mongoose.connection.on('connected', () => {
 		console.log('MongoDB connection open');

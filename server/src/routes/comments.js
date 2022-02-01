@@ -37,7 +37,15 @@ export default () => {
 	);
 
 	// PUT /comments/:id
-	api.put('/:id', validateId, auth, extractUserInfo, commentValidator, catchAsync(commentsController.update));
+	api.put(
+		'/:id',
+		validateId,
+		auth,
+		extractUserInfo,
+		commentValidator,
+		mqttPublish('comments/update'),
+		catchAsync(commentsController.update)
+	);
 
 	// DELETE /comments/:id
 	api.delete(

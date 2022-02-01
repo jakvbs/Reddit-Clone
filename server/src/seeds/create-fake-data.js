@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { LoremIpsum } from 'lorem-ipsum';
 import mongoose from 'mongoose';
+import config from '../config/config';
 import Comment from '../models/Comment';
 import Post from '../models/Post';
 import Sub from '../models/Sub';
@@ -36,7 +37,7 @@ const postCount = 100;
 const commentCount = 200;
 
 (async () => {
-	mongoose.connect(process.env.MONGODB_URI, {
+	mongoose.connect(`mongodb://${config.mongoHost}:${config.mongoPort}/${config.mongoDb}`, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	});
@@ -52,7 +53,7 @@ const commentCount = 200;
 		{
 			username: 'admin',
 			email: 'admin@example.com',
-			password: 'admin',
+			password: 'password',
 			isAdmin: true,
 		},
 		{
