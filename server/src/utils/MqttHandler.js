@@ -19,38 +19,14 @@ class MqttHandler {
 			this.mqttClient.end();
 		});
 
-		this.mqttClient.on('message', function onMessage(topic, message) {
-			console.log('Topic: ', topic, 'Message: ', message.toString());
-		});
-
 		this.mqttClient.on('close', () => {
 			console.log('Mqtt client disconnected');
 		});
 	}
 
 	sendMessage(topic, message) {
-		return new Promise((resolve, reject) => {
-			this.mqttClient
-				.publish(topic, message)
-				.then(() => {
-					resolve();
-				})
-				.catch((err) => {
-					reject(err);
-				});
-		});
-	}
-
-	subscribe(topic) {
-		return new Promise((resolve, reject) => {
-			this.mqttClient
-				.subscribe(topic)
-				.then(() => {
-					resolve();
-				})
-				.catch((err) => {
-					reject(err);
-				});
+		this.mqttClient.publish(topic, message).catch((err) => {
+			console.log(err);
 		});
 	}
 }

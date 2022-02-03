@@ -20,6 +20,14 @@ export const authReducer = (state = initialState, action) => {
 			};
 		case types.REGISTER_SUCCESS:
 		case types.LOGIN_SUCCESS:
+			window.location.reload();
+			return {
+				...state,
+				loading: false,
+				authenticated: true,
+				user: action.payload,
+				errors: {},
+			};
 		case types.VALIDATE_TOKEN_SUCCESS:
 			return {
 				...state,

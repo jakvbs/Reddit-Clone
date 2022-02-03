@@ -6,7 +6,11 @@ import * as Yup from 'yup';
 import { createSub } from '../../../state/ducks/subs/operations';
 
 const SubSchema = Yup.object().shape({
-	name: Yup.string().min(3).max(25).required(),
+	name: Yup.string()
+		.matches(/^[a-z0-9]+$/i, 'Must be lowercase alphanumeric')
+		.min(3)
+		.max(25)
+		.required(),
 	title: Yup.string().min(3).max(50).required(),
 	description: Yup.string().min(3).max(100).required(),
 });

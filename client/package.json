@@ -36,7 +36,6 @@
     },
     "scripts": {
         "build": "rm -rf build && react-scripts build",
-        "prestart": "yarn build",
         "start": "serve -s build",
         "dev": "react-scripts start",
         "test": "react-scripts test",

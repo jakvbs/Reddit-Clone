@@ -108,7 +108,7 @@ const PostCard = ({ post: { id, title, body, createdAt, voteScore, commentCount,
 					<p className="text-xs text-gray-500">
 						Posted by
 						<Link to={`/user/${user.id}`} className="mx-1 hover:underline">
-							/user/{user.username}
+							{user.username}
 						</Link>
 						<Link to={url} className="mx-1 hover:underline">
 							{dayjs(createdAt).fromNow()}

@@ -59,10 +59,6 @@ export default {
 
 		const vote = await Vote.findOne({ user: user._id, post: post._id });
 
-		if ((!vote && value === 0) || value === vote?.value) {
-			return res.status(200).send(post);
-		}
-
 		if (!vote) {
 			const newVote = new Vote({
 				user,

@@ -37,7 +37,7 @@ export default () => {
 	api.get('/google', passport.authenticate('google', { scope: ['profile'] }));
 
 	api.get('/google/redirect', passport.authenticate('google'), (req, res) =>
-		res.status(301).redirect('http://localhost:3000/')
+		res.status(301).redirect(process.env.CLIENT_URL)
 	);
 
 	return api;

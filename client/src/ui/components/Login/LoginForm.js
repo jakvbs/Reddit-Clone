@@ -6,7 +6,9 @@ import * as Yup from 'yup';
 import { login } from '../../../state/ducks/auth/operations';
 
 const LoginSchema = Yup.object().shape({
-	username: Yup.string().required('Username is required'),
+	username: Yup.string()
+		.matches(/^[A-Za-z0-9]+$/i, 'Must be alphanumeric')
+		.required('Username is required'),
 	password: Yup.string().required('Password is required'),
 });
 

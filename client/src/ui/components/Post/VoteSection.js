@@ -37,7 +37,7 @@ const VoteSection = () => {
 			>
 				<ArrowSmUpIcon
 					className={classNames({
-						'text-red-500': post.userVote === 1,
+						'text-red-500': authenticated && post.userVote === 1,
 					})}
 				/>
 			</div>
@@ -48,7 +48,7 @@ const VoteSection = () => {
 			>
 				<ArrowSmDownIcon
 					className={classNames({
-						'text-blue-600': post.userVote === -1,
+						'text-blue-600': authenticated && post.userVote === -1,
 					})}
 				/>
 			</div>

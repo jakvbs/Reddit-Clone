@@ -43,7 +43,7 @@ const userSchema = Joi.object({
 });
 
 const subSchema = Joi.object({
-	name: Joi.string().min(3).max(25).required(),
+	name: Joi.string().alphanum().min(3).max(25).required(),
 	title: Joi.string().min(3).max(50).required(),
 	description: Joi.string().min(3).max(100).required(),
 });
@@ -51,7 +51,7 @@ const subSchema = Joi.object({
 const postSchema = Joi.object({
 	title: Joi.string().min(2).max(100).required(),
 	body: Joi.string().min(2).max(1000).required(),
-	subname: Joi.string().required(),
+	subname: Joi.string().alphanum().required(),
 });
 
 const commentSchema = Joi.object({

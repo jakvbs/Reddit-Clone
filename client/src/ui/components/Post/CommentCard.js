@@ -86,7 +86,7 @@ const CommentCard = ({ comment }) => {
 				>
 					<ArrowSmUpIcon
 						className={classNames({
-							'text-red-500': comment.userVote === 1,
+							'text-red-500': authenticated && comment.userVote === 1,
 						})}
 					/>
 				</div>
@@ -98,7 +98,7 @@ const CommentCard = ({ comment }) => {
 				>
 					<ArrowSmDownIcon
 						className={classNames({
-							'text-blue-600': comment.userVote === -1,
+							'text-blue-600': authenticated && comment.userVote === -1,
 						})}
 					/>
 				</div>

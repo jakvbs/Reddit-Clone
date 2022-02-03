@@ -15,7 +15,6 @@ const sortOptions = [
 ];
 
 const Dashboard = () => {
-	const { data: topSubs, isPending, error } = useAxios('/subs?sort=postsCount&order=desc&limit=8');
 	const [selectedSortOption, setSelectedSortOption] = useState(sortOptions[0].value);
 
 	const dispatch = useDispatch();
@@ -23,6 +22,8 @@ const Dashboard = () => {
 	const posts = useSelector((state) => state.entities.posts.allIds.map((id) => state.entities.posts.byId[id]));
 	const { authenticated } = useSelector((state) => state.auth);
 	const { loading, errors } = useSelector((state) => state.posts);
+
+	const { data: topSubs, isPending, error } = useAxios('/subs?sort=postsCount&order=desc&limit=8');
 
 	useEffect(() => {
 		dispatch(changeSortOrder(selectedSortOption));

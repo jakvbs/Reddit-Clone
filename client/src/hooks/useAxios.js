@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { useEffect, useState } from 'react';
 
-const useAxios = (url) => {
+const useAxios = (url, deps = []) => {
 	const [data, setData] = useState(null);
 	const [isPending, setIsPending] = useState(true);
 	const [error, setError] = useState(null);
@@ -22,7 +22,7 @@ const useAxios = (url) => {
 			});
 
 		return () => cancelToken.cancel();
-	}, [url]);
+	}, [url, ...deps]);
 
 	return { data, isPending, error };
 };

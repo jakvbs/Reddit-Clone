@@ -10,15 +10,21 @@ const useMqttClient = () => {
 
 	useEffect(() => {
 		if (client) {
-			if (process.env.NODE_ENV === 'development') {
-				client.on('connect', () => {
-					console.log('%cMQTT client connected', 'color: red');
-				});
-			}
+			client.on('connect', () => {
+				if (process.env.NODE_ENV === 'development') {
+					console.log('%cMQTT client connected', 'color: green');
+				}
+			});
 			client.on('close', () => {
+				if (process.env.NODE_ENV === 'development') {
+					console.log('%cMQTT client disconnected', 'color: red');
+				}
 				setClient(null);
 			});
 			client.on('error', () => {
+				if (process.env.NODE_ENV === 'development') {
+					console.log('%cMQTT client error', 'color: red');
+				}
 				setClient(null);
 			});
 		}

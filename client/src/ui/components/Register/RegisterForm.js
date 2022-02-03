@@ -6,7 +6,9 @@ import { register } from '../../../state/ducks/auth/operations';
 
 const RegisterSchema = Yup.object().shape({
 	email: Yup.string().email('Invalid email').required('Email is required'),
-	username: Yup.string().required('Username is required'),
+	username: Yup.string()
+		.matches(/^[A-Za-z0-9]+$/i, 'Must be alphanumeric')
+		.required('Username is required'),
 	password: Yup.string().min(8, 'Password must be at least 8 characters long').required('Password is required'),
 });
 
